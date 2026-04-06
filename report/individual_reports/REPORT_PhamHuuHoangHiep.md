@@ -11,18 +11,26 @@
 *Describe your specific contribution to the codebase (e.g., implemented a specific tool, fixed the parser, etc.).*
 
 - **Modules Implementated**:
+  - Create web demo
   - Tool Design Evolution
   - Trace Quality
   - Failure Handling
   - Sửa agent thay đổi ngôn ngữ dựa theo input
 
 - **Code Highlights**:
-  - [Commit 1](https://github.com/hoanghiepbk/day03_2A202600415/commit/7c25f7997d4187eeb3cbca91d2c27b23be394be5)
-  - [Commit 2](https://github.com/hoanghiepbk/day03_2A202600415/commit/8a7ce72dbf901f910b11f967f34e1e91098f4609)
-  - [Commit 3](https://github.com/hoanghiepbk/day03_2A202600415/commit/e0de44e8afe4fddb702862c5890971d76f4208b1)
+  - Link demo PNG : https://docs.google.com/document/d/1DuX_CcaLGKkvT_pANiCQuJly-h672MlIweQIgxM51lQ/edit?tab=t.0
+  - [Commit 1](https://github.com/hoanghiepbk/day03_2A202600415/commit/7636ca23f42b4caa6eb9f4cee4c69768b362e85c)
+  - [Commit 2](https://github.com/hoanghiepbk/day03_2A202600415/commit/7c25f7997d4187eeb3cbca91d2c27b23be394be5)
+  - [Commit 3](https://github.com/hoanghiepbk/day03_2A202600415/commit/8a7ce72dbf901f910b11f967f34e1e91098f4609)
+  - [Commit 4](https://github.com/hoanghiepbk/day03_2A202600415/commit/e0de44e8afe4fddb702862c5890971d76f4208b1)
 
 - **Documentation**:
   Các thay đổi chính:
+  - Create web demo với các chức năng :
+    - 🔀 3 chế độ: Đơn lẻ / So sánh 2 / So sánh cả 3
+    - 📡 Broadcast: Gửi đồng thời 1 câu hỏi đến tất cả panels
+    - 📊 Metrics real-time: Tokens, cost, latency, requests per panel
+    - 🎯 Chuyển đổi linh hoạt: Dropdown chọn mode trong mỗi panel
   - Retry có điều kiện khi parse lỗi
   - Guardrail chống gọi sai tool
   - Guardrail cho tham số tool
