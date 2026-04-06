@@ -273,6 +273,16 @@ Language policy:
         )
         return str(out)
 
+    def _safe_fallback_answer(self, user_input: str) -> str:
+        """
+        Deterministic fallback when the loop cannot recover from repeated formatting/loop errors.
+        """
+        return (
+            "I cannot complete this request reliably due to repeated tool/format errors. "
+            "Please rephrase your request with explicit details, then try again.\n"
+            f"(Original request: {user_input[:240]})"
+        )
+
     def run(self, user_input: str) -> str:
         logger.log_event(
             "AGENT_START",
@@ -290,6 +300,10 @@ Language policy:
         )
         steps = 0
         gen_kw = self._generate_kwargs()
+        parse_error_streak = 0
+        max_parse_retries = 2
+        last_action_sig: Optional[Tuple[str, str]] = None
+        repeated_action_count = 0
 
         while steps < self.max_steps:
             result = self.llm.generate(scratch, system_prompt=self.get_system_prompt(), **gen_kw)
@@ -315,14 +329,26 @@ Language policy:
 
             act = parse_action(cleaned)
             if not act:
+                parse_error_streak += 1
                 logger.log_event(
                     "AGENT_ERROR",
                     {
                         "code": "PARSE_ERROR",
                         "step": steps,
                         "detail": "No Final Answer and no parseable Action: tool(args).",
+                        "parse_error_streak": parse_error_streak,
                     },
                 )
+                if parse_error_streak > max_parse_retries:
+                    logger.log_event(
+                        "AGENT_END",
+                        {
+                            "steps": steps + 1,
+                            "outcome": "FALLBACK_AFTER_PARSE_RETRIES",
+                            "code": "PARSE_RETRY_EXCEEDED",
+                        },
+                    )
+                    return self._safe_fallback_answer(user_input)
                 scratch += (
                     "\nObservation: Parse error — you must output either "
                     "`Action: tool_name(...)` or `Final Answer: ...` using the required headers.\n"
@@ -331,6 +357,31 @@ Language policy:
                 continue
 
             tool_name, args_blob = act
+            parse_error_streak = 0
+            action_sig = (tool_name, args_blob.strip())
+            if action_sig == last_action_sig:
+                repeated_action_count += 1
+            else:
+                repeated_action_count = 0
+            last_action_sig = action_sig
+
+            if repeated_action_count >= 1:
+                logger.log_event(
+                    "AGENT_ERROR",
+                    {
+                        "code": "LOOP_DETECTED",
+                        "step": steps,
+                        "tool": tool_name,
+                        "args": args_blob[:200],
+                    },
+                )
+                scratch += (
+                    "\nObservation: Loop guardrail triggered — you repeated the same Action with "
+                    "the same arguments. Choose a different tool, adjust arguments, or provide Final Answer.\n"
+                )
+                steps += 1
+                continue
+
             observation = self._execute_tool(tool_name, args_blob)
             scratch += f"Observation: {observation}\n"
             steps += 1
