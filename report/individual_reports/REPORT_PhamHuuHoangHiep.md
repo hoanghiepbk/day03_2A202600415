@@ -13,29 +13,30 @@
 - **Modules Implementated**: 
                             -Tool Design Evolution
                             -Trace Quality
+                            -Failure Handling
+                            -Sửa agent thay đổi ngôn ngữ dựa theo input
 - **Code Highlights**: 
 https://github.com/hoanghiepbk/day03_2A202600415/commit/7c25f7997d4187eeb3cbca91d2c27b23be394be5
+https://github.com/hoanghiepbk/day03_2A202600415/commit/8a7ce72dbf901f910b11f967f34e1e91098f4609
 https://github.com/hoanghiepbk/day03_2A202600415/commit/e0de44e8afe4fddb702862c5890971d76f4208b1
+
 - **Documentation**: 
 Các thay đổi chính:
-
+Retry có điều kiện khi parse lỗi
+Guardrail chống gọi sai tool
+Guardrail cho tham số tool
+Loop protection thông minh hơn
+Fallback an toàn
 Thêm module mới src/telemetry/reporting.py
-
 Thêm cơ chế ghi log có cấu trúc để dễ lấy trace:
 Ghi logs/experiments.jsonl (mỗi run 1 record JSON)
 Ghi logs/compare_summary.csv (bảng so sánh chatbot/agent để mở Excel)
 Cập nhật run_lab.py
-
-chatbot, agent, compare, dalat-compare, benchmark đều ghi snapshot vào experiments.jsonl
-compare và dalat-compare tự động append dòng vào compare_summary.csv
-Thêm hướng dẫn log tại logs/README.md
-
+Chatbot, agent, compare, dalat-compare, benchmark đều ghi snapshot vào experiments.jsonl
+Compare và dalat-compare tự động append dòng vào compare_summary.csv
 Chỉ rõ nguồn dữ liệu cho phần Tool Design Evolution và Trace Quality
-Trỏ trực tiếp tới các file log mới để trích bằng chứng
-Cập nhật README.md
-
 Thêm mục “Comparison Logs” mô tả 3 file log phục vụ report
-Đã cải thiện code để pipeline chạy ổn (không bị kẹt llama_cpp khi không dùng local model), nên việc thu trace cho chatbot/agent giờ ổn định hơn.
+Đã cải thiện code để pipeline chạy ổn (không bị kẹt llama_cpp khi không dùng local model), nên việc thu trace cho chatbot/agent ổn định hơn.
 
 
 ---
