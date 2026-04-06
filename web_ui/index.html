@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="So sánh trực quan Chatbot vs ReAct Agent v1 vs v2 - Lab 3 Agentic AI">
+    <title>🤖 AI Agent Arena — Chatbot vs Agent Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="url(#grad1)" stroke-width="2.5"/>
+                        <path d="M10 16 L16 10 L22 16 L16 22Z" fill="url(#grad1)" opacity="0.8"/>
+                        <circle cx="16" cy="16" r="3" fill="#fff"/>
+                        <defs>
+                            <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#6366f1"/>
+                                <stop offset="100%" stop-color="#a855f7"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Agent Arena</h1>
+                    <span class="logo-subtitle">Chatbot vs ReAct Agent • Lab 3</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Mode Selector -->
+        <section class="mode-selector">
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="single" onclick="switchLayout('single')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    </svg>
+                    Đơn lẻ
+                </button>
+                <button class="mode-tab" data-mode="dual" onclick="switchLayout('dual')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="8" height="18" rx="2"/>
+                        <rect x="13" y="3" width="8" height="18" rx="2"/>
+                    </svg>
+                    So sánh 2
+                </button>
+                <button class="mode-tab" data-mode="triple" onclick="switchLayout('triple')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="5.5" height="18" rx="1.5"/>
+                        <rect x="9.25" y="3" width="5.5" height="18" rx="1.5"/>
+                        <rect x="16.5" y="3" width="5.5" height="18" rx="1.5"/>
+                    </svg>
+                    So sánh cả 3
+                </button>
+            </div>
+        </section>
+
+        <!-- Chat Panels Container -->
+        <section class="panels-container" id="panelsContainer">
+            <!-- Panel 1 -->
+            <div class="chat-panel" id="panel-0" data-panel-index="0">
+                <div class="panel-header">
+                    <div class="panel-selector">
+                        <select class="agent-select" id="select-0" onchange="updatePanelMode(0)">
+                            <option value="chatbot">💬 Chatbot (Baseline)</option>
+                            <option value="agent_v1">🤖 Agent v1 (Minimal)</option>
+                            <option value="agent_v2" selected>🧠 Agent v2 (Strict)</option>
+                        </select>
+                    </div>
+                    <div class="panel-metrics" id="metrics-0">
+                        <!-- Metrics populated dynamically -->
+                    </div>
+                </div>
+                <div class="chat-messages" id="messages-0">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">🏔️</div>
+                        <h3>Chào mừng đến Agent Arena!</h3>
+                        <p>Hỏi về du lịch Đà Lạt — khách sạn, thời tiết, trang phục...</p>
+                        <div class="suggestion-chips">
+                            <button class="chip" onclick="fillSuggestion('Tìm khách sạn Đà Lạt dưới 800k cho đêm 12/04, check thời tiết và gợi ý trang phục')">🏨 Tìm khách sạn Đà Lạt</button>
+                            <button class="chip" onclick="fillSuggestion('Thời tiết Đà Lạt ngày 12/04/2026 như thế nào?')">🌤️ Thời tiết Đà Lạt</button>
+                            <button class="chip" onclick="fillSuggestion('Review khách sạn Ngọc Lan ở Đà Lạt')">⭐ Review Ngọc Lan Hotel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <textarea class="chat-input" id="input-0" placeholder="Nhập câu hỏi của bạn..." rows="1" onkeydown="handleKeyDown(event, 0)"></textarea>
+                        <button class="send-btn" id="send-0" onclick="sendMessage(0)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2 (hidden by default) -->
+            <div class="chat-panel hidden" id="panel-1" data-panel-index="1">
+                <div class="panel-header">
+                    <div class="panel-selector">
+                        <select class="agent-select" id="select-1" onchange="updatePanelMode(1)">
+                            <option value="chatbot">💬 Chatbot (Baseline)</option>
+                            <option value="agent_v1" selected>🤖 Agent v1 (Minimal)</option>
+                            <option value="agent_v2">🧠 Agent v2 (Strict)</option>
+                        </select>
+                    </div>
+                    <div class="panel-metrics" id="metrics-1"></div>
+                </div>
+                <div class="chat-messages" id="messages-1">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">🤖</div>
+                        <h3>Agent v1 — Minimal Prompt</h3>
+                        <p>ReAct agent với prompt tối giản, key=value Actions</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <textarea class="chat-input" id="input-1" placeholder="Nhập câu hỏi..." rows="1" onkeydown="handleKeyDown(event, 1)"></textarea>
+                        <button class="send-btn" id="send-1" onclick="sendMessage(1)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3 (hidden by default) -->
+            <div class="chat-panel hidden" id="panel-2" data-panel-index="2">
+                <div class="panel-header">
+                    <div class="panel-selector">
+                        <select class="agent-select" id="select-2" onchange="updatePanelMode(2)">
+                            <option value="chatbot" selected>💬 Chatbot (Baseline)</option>
+                            <option value="agent_v1">🤖 Agent v1 (Minimal)</option>
+                            <option value="agent_v2">🧠 Agent v2 (Strict)</option>
+                        </select>
+                    </div>
+                    <div class="panel-metrics" id="metrics-2"></div>
+                </div>
+                <div class="chat-messages" id="messages-2">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">💬</div>
+                        <h3>Chatbot — Baseline</h3>
+                        <p>LLM đơn thuần, không có tools — quan sát hạn chế</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <textarea class="chat-input" id="input-2" placeholder="Nhập câu hỏi..." rows="1" onkeydown="handleKeyDown(event, 2)"></textarea>
+                        <button class="send-btn" id="send-2" onclick="sendMessage(2)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Broadcast Input (for dual/triple mode) -->
+        <section class="broadcast-input hidden" id="broadcastSection">
+            <div class="broadcast-wrapper">
+                <div class="broadcast-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5M12 12h.01"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                    Gửi đồng thời đến tất cả
+                </div>
+                <div class="input-wrapper broadcast-input-wrapper">
+                    <textarea class="chat-input broadcast-textarea" id="broadcastInput" placeholder="Nhập câu hỏi để gửi đồng thời đến tất cả agent..." rows="1" onkeydown="handleBroadcastKeyDown(event)"></textarea>
+                    <button class="send-btn broadcast-send" onclick="broadcastMessage()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
